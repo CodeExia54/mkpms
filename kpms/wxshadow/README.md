@@ -104,6 +104,30 @@ dmesg | grep wxshadow
 kpatch <superkey> kpm unload wxshadow
 ```
 
+### 安全预检查（仅解析符号，不安装任何 hook）
+
+当目标内核可能不兼容时，先用 `probe_only=1` 进行预检查，避免直接进入 hook 阶段：
+
+```bash
+kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "probe_only=1"
+dmesg | grep -E "wxshadow: .*found|wxshadow: .*not found|probe-only"
+kpatch <superkey> kpm unload wxshadow
+```
+
+`probe_only=1` 模式会执行符号解析并打印日志，然后直接返回，不做 offset 扫描和 hook 安装。
+
+## 本地 Ubuntu 构建（仅构建 wxshadow）
+
+```bash
+./scripts/setup_ubuntu_build_env.sh
+./scripts/build_wxshadow.sh
+```
+
+产物路径：
+
+- `build/kpms/wxshadow/wxshadow.kpm`
+- `build/kpms/wxshadow/wxshadow_client`
+
 ## 关键限制
 
 - 仅支持 ARM64
@@ -123,4 +147,3 @@ kpatch <superkey> kpm unload wxshadow
 | `follow_page_pte` | hook (可选) | GUP 隐藏 |
 | `copy_process` | hook | fork 保护 |
 | `exit_mmap` | hook | 进程退出清理 |
-

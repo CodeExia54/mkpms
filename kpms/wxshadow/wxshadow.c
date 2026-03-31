@@ -1347,14 +1347,23 @@ static void wx_unregister_brk_step_hooks(void)
 static long wxshadow_init(const char *args, const char *event, void *__user reserved)
 {
     int ret;
+    int probe_only = 0;
 
     pr_info("wxshadow: initializing...\n");
+    if (args && strstr(args, "probe_only=1"))
+        probe_only = 1;
+    if (probe_only)
+        pr_info("wxshadow: probe_only=1, resolve symbols only (no scan, no hooks)\n");
 
     /* Resolve kernel symbols */
     ret = resolve_symbols();
     if (ret < 0) {
         pr_err("wxshadow: failed to resolve symbols\n");
         return ret;
+    }
+    if (probe_only) {
+        pr_info("wxshadow: probe-only check complete, module loaded without hooks\n");
+        return 0;
     }
 
     /* Scan mm_struct offsets */

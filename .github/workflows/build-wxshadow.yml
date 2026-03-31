@@ -1,0 +1,46 @@
+name: build-wxshadow
+
+on:
+  push:
+    branches:
+      - work
+    paths:
+      - 'CMakeLists.txt'
+      - 'kpms/**'
+      - 'scripts/**'
+      - '.github/workflows/build-wxshadow.yml'
+  pull_request:
+    branches:
+      - work
+    paths:
+      - 'CMakeLists.txt'
+      - 'kpms/**'
+      - 'scripts/**'
+      - '.github/workflows/build-wxshadow.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build wxshadow only
+        run: cmake --build build --target wxshadow.kpm wxshadow_client -j"$(nproc)"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wxshadow-build
+          path: |
+            build/kpms/wxshadow/wxshadow.kpm
+            build/kpms/wxshadow/wxshadow_client
