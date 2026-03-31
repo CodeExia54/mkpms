@@ -104,9 +104,12 @@ dmesg | grep wxshadow
 kpatch <superkey> kpm unload wxshadow
 ```
 
-### 安全预检查（仅解析符号，不安装任何 hook）
+### 安全预检查（默认仅解析符号，不安装任何 hook）
 
-当目标内核可能不兼容时，先用 `probe_only=1` 进行预检查，避免直接进入 hook 阶段：
+当前版本默认是 **safe mode**（仅解析符号，不进入 hook 阶段），适合先确认内核兼容性。
+如果你通过 APatch App 直接加载（通常不传模块参数），也会走 safe mode。
+
+当目标内核可能不兼容时，可显式使用 `probe_only=1`：
 
 ```bash
 kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "probe_only=1"
@@ -114,7 +117,11 @@ dmesg | grep -E "wxshadow: .*found|wxshadow: .*not found|probe-only"
 kpatch <superkey> kpm unload wxshadow
 ```
 
-`probe_only=1` 模式会执行符号解析并打印日志，然后直接返回，不做 offset 扫描和 hook 安装。
+启用完整功能（安装 hooks）请显式传参：
+
+```bash
+kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "enable_hooks=1"
+```
 
 ## 本地 Ubuntu 构建（仅构建 wxshadow）
 
