@@ -61,6 +61,59 @@ static unsigned long lookup_name_safe(const char *name)
         kfunc_##name = (typeof(kfunc_##name))lookup_name_safe(#name); \
     } while (0)
 
+static void wxshadow_dump_symbol_table(void)
+{
+#define WX_DUMP_SYM(name, ptr) \
+    pr_info("wxshadow: sym %-28s = %px%s\n", \
+            name, (void *)(ptr), (ptr) ? "" : " (missing)")
+
+    WX_DUMP_SYM("find_vma", kfunc_find_vma);
+    WX_DUMP_SYM("get_task_mm", kfunc_get_task_mm);
+    WX_DUMP_SYM("mmput", kfunc_mmput);
+    WX_DUMP_SYM("exit_mmap", kfunc_exit_mmap);
+    WX_DUMP_SYM("__get_free_pages", kfunc___get_free_pages);
+    WX_DUMP_SYM("free_pages", kfunc_free_pages);
+    WX_DUMP_SYM("memstart_addr", kvar_memstart_addr);
+    WX_DUMP_SYM("physvirt_offset", kvar_physvirt_offset);
+
+    WX_DUMP_SYM("_raw_spin_lock", wxfunc(_raw_spin_lock));
+    WX_DUMP_SYM("_raw_spin_unlock", wxfunc(_raw_spin_unlock));
+    WX_DUMP_SYM("find_task_by_vpid", wxfunc(find_task_by_vpid));
+    WX_DUMP_SYM("__task_pid_nr_ns", wxfunc(__task_pid_nr_ns));
+    WX_DUMP_SYM("init_task", wx_init_task);
+
+    WX_DUMP_SYM("flush_tlb_page", kfunc_flush_tlb_page);
+    WX_DUMP_SYM("__flush_tlb_range", kfunc___flush_tlb_range);
+    WX_DUMP_SYM("__split_huge_pmd", kfunc___split_huge_pmd);
+    WX_DUMP_SYM("flush_dcache_page", kfunc_flush_dcache_page);
+    WX_DUMP_SYM("icache_flush_fn", kfunc___flush_icache_range);
+
+    WX_DUMP_SYM("user_enable_single_step", kfunc_user_enable_single_step);
+    WX_DUMP_SYM("user_disable_single_step", kfunc_user_disable_single_step);
+    WX_DUMP_SYM("brk_handler", kfunc_brk_handler);
+    WX_DUMP_SYM("single_step_handler", kfunc_single_step_handler);
+    WX_DUMP_SYM("register_user_break_hook", kfunc_register_user_break_hook);
+    WX_DUMP_SYM("register_user_step_hook", kfunc_register_user_step_hook);
+    WX_DUMP_SYM("debug_hook_lock", kptr_debug_hook_lock);
+
+    WX_DUMP_SYM("__rcu_read_lock", kfunc_rcu_read_lock);
+    WX_DUMP_SYM("__rcu_read_unlock", kfunc_rcu_read_unlock);
+    WX_DUMP_SYM("synchronize_rcu", kfunc_synchronize_rcu);
+    WX_DUMP_SYM("kick_all_cpus_sync", kfunc_kick_all_cpus_sync);
+
+    WX_DUMP_SYM("kzalloc/__kmalloc", kfunc_kzalloc);
+    WX_DUMP_SYM("kcalloc/kmalloc_array", kfunc_kcalloc);
+    WX_DUMP_SYM("kfree", kfunc_kfree);
+    WX_DUMP_SYM("copy_from_kernel_nofault", kfunc_copy_from_kernel_nofault);
+
+    WX_DUMP_SYM("do_page_fault alt", kfunc_do_page_fault);
+    WX_DUMP_SYM("follow_page_pte", kfunc_follow_page_pte);
+    WX_DUMP_SYM("dup_mmap", kfunc_dup_mmap);
+    WX_DUMP_SYM("uprobe_dup_mmap", kfunc_uprobe_dup_mmap);
+
+#undef WX_DUMP_SYM
+}
+
 /* ========== Symbol resolution ========== */
 
 int resolve_symbols(void)
@@ -426,6 +479,7 @@ int resolve_symbols(void)
 
     /* init_task already resolved above via kallsyms */
 
+    wxshadow_dump_symbol_table();
     pr_info("wxshadow: all symbols resolved successfully\n");
     return 0;
 }
