@@ -123,6 +123,8 @@ kpatch <superkey> kpm unload wxshadow
 ./scripts/build_wxshadow.sh
 ```
 
+> 脚本会自动执行 `git submodule update --init --recursive`（若 `.kp/kernel` 缺失）。
+
 产物路径：
 
 - `build/kpms/wxshadow/wxshadow.kpm`

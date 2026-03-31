@@ -21,6 +21,7 @@ git config submodule.recurse true 自动更新submodule
 ./scripts/setup_ubuntu_build_env.sh
 ./scripts/build_wxshadow.sh
 ```
+> 会自动初始化 `.kp` 子模块（KernelPatch 框架）。
 
 <img width="1116" height="173" alt="c62acc29b9c00edf4d3a301c0aacd05a" src="https://github.com/user-attachments/assets/de6280d8-5093-46d3-9fed-db38355ae6f1" />
 
