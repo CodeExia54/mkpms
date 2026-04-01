@@ -161,7 +161,13 @@ int resolve_symbols(void)
 
     /* ===== Memory management (all exported) ===== */
     pr_info("wxshadow: [1/12] mm functions...\n");
-    RESOLVE_SYMBOL(find_vma);
+     kfunc_find_vma = (typeof(kfunc_find_vma))lookup_name_safe("__find_vma");
+  if (!kfunc_find_vma)
+      kfunc_find_vma = (typeof(kfunc_find_vma))lookup_name_safe("find_vma");
+  if (!kfunc_find_vma) {
+      pr_err("wxshadow: failed to find symbol: __find_vma/find_vma\n");
+      return -1;
+  }
     RESOLVE_SYMBOL(get_task_mm);
     RESOLVE_SYMBOL(mmput);
     /* find_task_by_vpid: use wxfunc(find_task_by_vpid) */
