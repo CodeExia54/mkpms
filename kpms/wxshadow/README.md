@@ -104,12 +104,12 @@ dmesg | grep wxshadow
 kpatch <superkey> kpm unload wxshadow
 ```
 
-### 安全预检查（默认仅解析符号，不安装任何 hook）
+### 安全预检查（默认被动模式，不做任何内核操作）
 
-当前版本默认是 **safe mode**（仅解析符号，不进入 hook 阶段），适合先确认内核兼容性。
-如果你通过 APatch App 直接加载（通常不传模块参数），也会走 safe mode。
+当前版本默认是 **passive mode**（不解析符号、不安装 hook），适合通过 APatch App 先验证“仅加载是否稳定”。
+如果你通过 APatch App 直接加载（通常不传模块参数），会走 passive mode。
 
-当目标内核可能不兼容时，可显式使用 `probe_only=1`：
+当默认加载稳定后，可显式进入符号预检查模式 `probe_only=1`：
 
 ```bash
 kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "probe_only=1"

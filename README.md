@@ -12,8 +12,9 @@
 git config submodule.recurse true 自动更新submodule
 
 # 快速使用
-* 使用KernelPatch或者Apatch加载kpm模块（默认安全模式，仅解析符号不安装hook）  
-* 如需启用完整hook功能：`kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "enable_hooks=1"`  
+* 使用KernelPatch或者Apatch加载kpm模块（默认被动模式：不解析符号、不安装hook）  
+* 仅做符号检查：`kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "probe_only=1"`  
+* 启用完整hook功能：`kpatch <superkey> kpm load /data/local/tmp/wxshadow.kpm "enable_hooks=1"`  
 * 然后使用wxshadow_client -p pid -a address -r x0=9 -r可选的修改寄存器值，dmesg查看日志  
 * 打开测试app，复制value函数的地址，设置断点测试，观察crc校验结果保持不变，修改寄存器改变value函数返回值  
 * 复制crc32函数地址设置断点，app卡死，无法同时读取和执行  

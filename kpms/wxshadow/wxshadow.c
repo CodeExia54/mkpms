@@ -1355,10 +1355,12 @@ static long wxshadow_init(const char *args, const char *event, void *__user rese
         probe_only = 1;
     if (args && (strstr(args, "enable_hooks=1") || strstr(args, "active=1")))
         enable_hooks = 1;
+    if (!probe_only && !enable_hooks) {
+        pr_info("wxshadow: passive mode (default): no resolve/no hooks. use \"probe_only=1\" or \"enable_hooks=1\"\n");
+        return 0;
+    }
     if (probe_only)
         pr_info("wxshadow: probe_only=1, resolve symbols only (no scan, no hooks)\n");
-    else if (!enable_hooks)
-        pr_info("wxshadow: safe mode (default): resolve symbols only. pass \"enable_hooks=1\" to activate hooks\n");
 
     /* Resolve kernel symbols */
     ret = resolve_symbols();
@@ -1366,7 +1368,7 @@ static long wxshadow_init(const char *args, const char *event, void *__user rese
         pr_err("wxshadow: failed to resolve symbols\n");
         return ret;
     }
-    if (probe_only || !enable_hooks) {
+    if (probe_only) {
         pr_info("wxshadow: probe-only check complete, module loaded without hooks\n");
         return 0;
     }
