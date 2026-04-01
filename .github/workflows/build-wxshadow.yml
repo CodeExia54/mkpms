@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install toolchain
         run: |
@@ -37,10 +39,13 @@ jobs:
       - name: Build wxshadow only
         run: cmake --build build --target wxshadow.kpm wxshadow_client -j"$(nproc)"
 
+      - name: Generate artifact timestamp
+        run: echo "ARTIFACT_TS=$(date -u +%Y%m%d-%H%M%S)" >> "$GITHUB_ENV"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wxshadow-build
+          name: wxshadow-build-${{ env.ARTIFACT_TS }}-${{ github.run_number }}
           path: |
             build/kpms/wxshadow/wxshadow.kpm
             build/kpms/wxshadow/wxshadow_client
